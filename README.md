@@ -20,7 +20,7 @@ alt="demo for BundleFusion_Ubuntu" width="720" height="540" /></a>
 ```
 
 ## Installation
-
+### Install Locally
 This code is tested under ubuntu16.04/GCC7/CUDA10.1 (GPU: RTX2060).
 
 Requirements:
@@ -42,21 +42,37 @@ make -j8
 
 We use -DVISUALIZATION=OFF/ON to switch visualization plug.
 
+### Install with Docker
+You can download the Docker image via:
+```shell
+docker pull eight0153/bundle-fusion:cu101-ubuntu18.04
+```
+OR 
+you can build the Docker image from scratch:
+```shell
+docker build -t eight0153/bundle-fusion:cu101-ubuntu18.04 .
+```
+Note that since the Docker image contains the compiled code, you will need to build the image locally if you make changes to the source code. 
+
 ## Usage
 
 * Download datasets from BundleFusion project mainpage [http://graphics.stanford.edu/projects/bundlefusion/](http://graphics.stanford.edu/projects/bundlefusion/) and unzip it.
 * Run Commands:
 
-```
-cd build
-./bundle_fusion_example ../zParametersDefault.txt ../zParametersBundlingDefault.txt /PATH/TO/dataset/office2
-```
+    ```
+    cd build
+    ./bundle_fusion_example ../zParametersDefault.txt ../zParametersBundlingDefault.txt /PATH/TO/dataset/office2
+    ```
+
+    For Docker the command should look like:
+    ```shell
+    docker run -v </path/to/datasets>:/app/data:ro --rm --gpus all eight0153/bundle-fusion:cu101-ubuntu18.04 data/<dataset name>
 
 A pangolin window will show up and get real time reconstruction  result.
 
 * Save Mesh:
 
-we provide save mesh button at pangoln GUI, you need to specify the save path at zParametersDefault.txt for item "s_generateMeshDir".
+we provide save mesh button at Pangolin GUI, you need to specify the save path at zParametersDefault.txt for item "s_generateMeshDir".
 
 
 

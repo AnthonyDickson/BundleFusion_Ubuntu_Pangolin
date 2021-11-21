@@ -156,7 +156,7 @@ bool initBundleFusion ( std::string app_config, std::string bundle_config )
     catch ( const std::exception& e )
     {
         //MessageBoxA(NULL, e.what(), "Exception caught", MB_ICONERROR);
-        std::cerr<< ( "Exception caught" ) << std::endl;
+        std::cerr<< ( "Exception caught" ) << e.what() << std::endl;
         return false;
     }
     catch ( ... )
