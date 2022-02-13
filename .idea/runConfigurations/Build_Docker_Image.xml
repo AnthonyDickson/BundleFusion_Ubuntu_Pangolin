@@ -1,0 +1,23 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Build Docker Image" type="docker-deploy" factoryName="dockerfile" server-name="Docker">
+    <deployment type="dockerfile">
+      <settings>
+        <option name="imageTag" value="eight0153/opencv:3.4.16-cu116" />
+        <option name="buildOnly" value="true" />
+        <option name="command" value="data/room_vtm" />
+        <option name="containerName" value="bundle-fusion" />
+        <option name="commandLineOptions" value="--gpus all" />
+        <option name="sourceFilePath" value="Dockerfile" />
+        <option name="volumeBindings">
+          <list>
+            <DockerVolumeBindingImpl>
+              <option name="containerPath" value="/app" />
+              <option name="hostPath" value="C:\dev\CLionProjects\BundleFusion_Ubuntu_Pangolin" />
+            </DockerVolumeBindingImpl>
+          </list>
+        </option>
+      </settings>
+    </deployment>
+    <method v="2" />
+  </configuration>
+</component>

@@ -897,7 +897,7 @@ void ProgramCU::GenerateList(CuTexImage* list, CuTexImage* hist)
 //__inline__ __device__
 //float warpReduceMax(float val) {
 //	for (int offset = 32 / 2; offset > 0; offset /= 2) {
-//		val = max(val, __shfl_down(val, offset, 32));
+//		val = max(val, __shfl_down_sync(-1, val, offset, 32));
 //	}
 //	return val;
 //}
@@ -1332,7 +1332,7 @@ void __global__ ComputeDescriptorRECT_Kernel(float4* d_des, int num, int width, 
 __inline__ __device__
 float warpAllReduceSum(float val) {
 	for (int offset = 32 / 2; offset > 0; offset /= 2) {
-		val += __shfl_xor(val, offset, 32);
+		val += __shfl_xor_sync(-1, val, offset, 32);
 	}
 	return val;
 }

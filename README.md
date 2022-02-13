@@ -43,16 +43,20 @@ make -j8
 We use -DVISUALIZATION=OFF/ON to switch visualization plug.
 
 ### Install with Docker
-You can download the Docker image via:
-```shell
-docker pull eight0153/bundle-fusion:cu101-ubuntu18.04
-```
-OR 
-you can build the Docker image from scratch:
-```shell
-docker build -t eight0153/bundle-fusion:cu101-ubuntu18.04 .
-```
-Note that since the Docker image contains the compiled code, you will need to build the image locally if you make changes to the source code. 
+1. Get the Docker image:
+   1. You can download the Docker image via:
+      ```shell
+      docker pull eight0153/opencv:3.4.16-cu116
+      ```
+      OR 
+   2. you can build the Docker image from scratch:
+      ```shell
+      docker build -t eight0153/opencv:3.4.16-cu116 .
+      ```
+2. If you are using CLion as your IDE then you can do the following steps to enable IDE integration (e.g. code completion and navigation):
+   1. Set up a Docker toolchain (Build, Execution, Deployment -> Toolchains, Add -> Docker) and specify `eight0153/opencv:3.4.16-cu116` as the image.
+   2. Set up a CMake profile that uses the Docker toolchain.
+   3. **Note**: You should use the Docker image to build and run the program, instead of building through CLion which will use the CMake profile and will not work with the Docker image.
 
 ## Usage
 
@@ -66,9 +70,9 @@ Note that since the Docker image contains the compiled code, you will need to bu
 
     For Docker the command should look like:
     ```shell
-    docker run -v </path/to/datasets>:/app/data:ro --rm --gpus all eight0153/bundle-fusion:cu101-ubuntu18.04 data/<dataset name>
+    docker run -v </path/to/datasets>:/app/data --rm --gpus all eight0153/opencv:3.4.16-cu116 data/<dataset name>
 
-A pangolin window will show up and get real time reconstruction  result.
+A pangolin window will show up and get real time reconstruction  result (local builds only, not on Docker).
 
 * Save Mesh:
 

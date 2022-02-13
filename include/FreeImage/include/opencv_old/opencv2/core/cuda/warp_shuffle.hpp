@@ -87,7 +87,7 @@ namespace cv { namespace cuda { namespace device
     __device__ __forceinline__ T shfl_down(T val, unsigned int delta, int width = warpSize)
     {
     #if __CUDA_ARCH__ >= 300
-        return __shfl_down(val, delta, width);
+        return __shfl_down_sync(val, delta, width);
     #else
         return T();
     #endif
@@ -95,7 +95,7 @@ namespace cv { namespace cuda { namespace device
     __device__ __forceinline__ unsigned int shfl_down(unsigned int val, unsigned int delta, int width = warpSize)
     {
     #if __CUDA_ARCH__ >= 300
-        return (unsigned int) __shfl_down((int) val, delta, width);
+        return (unsigned int) __shfl_down_sync((int) val, delta, width);
     #else
         return 0;
     #endif
@@ -106,8 +106,8 @@ namespace cv { namespace cuda { namespace device
         int lo = __double2loint(val);
         int hi = __double2hiint(val);
 
-        lo = __shfl_down(lo, delta, width);
-        hi = __shfl_down(hi, delta, width);
+        lo = __shfl_down_sync(lo, delta, width);
+        hi = __shfl_down_sync(hi, delta, width);
 
         return __hiloint2double(hi, lo);
     #else

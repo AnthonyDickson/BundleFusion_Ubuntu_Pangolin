@@ -11,7 +11,7 @@ find_package(CUDA REQUIRED)
 set(CUDA_USE_STATIC_CUDA_RUNTIME OFF)
 set(CUDA_SEPARABLE_COMPILATION ON)
 set(CUDA_PROPAGATE_HOST_FLAGS OFF)
-set(CUDA_NVCC_FLAGS -arch=sm_35;-std=c++11;-lm)
+set(CUDA_NVCC_FLAGS -arch=sm_75;-std=c++11;-lm)
 ADD_DEFINITIONS(-fpermissive)
 
 find_package (Threads)

@@ -6,11 +6,11 @@ namespace ml {
 
 template<class FloatType>
 std::ostream& operator<<(std::ostream& os, const MeshData<FloatType>& meshData) {
-	os	<< "MeshData:\n" 
-		<< "\tVertices:  " << meshData.m_Vertices.size() << "\n" 
+	os	<< "MeshData:\n"
+		<< "\tVertices:  " << meshData.m_Vertices.size() << "\n"
 		<< "\tColors:    " << meshData.m_Colors.size() << "\n"
-		<< "\tNormals:   " << meshData.m_Normals.size() << "\n" 
-		<< "\tTexCoords: " << meshData.m_TextureCoords.size() << "\n" 
+		<< "\tNormals:   " << meshData.m_Normals.size() << "\n"
+		<< "\tTexCoords: " << meshData.m_TextureCoords.size() << "\n"
 		<< std::endl;
 
 	return os;
@@ -216,7 +216,7 @@ unsigned int MeshData<FloatType>::hasNearestNeighborApprox(const vec3i& coord, S
 template <class FloatType>
 unsigned int MeshData<FloatType>::mergeCloseVertices(FloatType thresh, bool approx)
 {
-	if (thresh <= (FloatType)0)	throw MLIB_EXCEPTION("invalid thresh " + std::to_string(thresh));	
+	if (thresh <= (FloatType)0)	throw MLIB_EXCEPTION("invalid thresh " + std::to_string(thresh));
 	unsigned int numV = (unsigned int)m_Vertices.size();
 
 	std::vector<unsigned int> vertexLookUp;	vertexLookUp.resize(numV);
@@ -231,7 +231,7 @@ unsigned int MeshData<FloatType>::mergeCloseVertices(FloatType thresh, bool appr
 		for (unsigned int v = 0; v < numV; v++) {
 
 			const vec3<FloatType>& vert = m_Vertices[v];
-			vec3i coord = toVirtualVoxelPos(vert, thresh);		
+			vec3i coord = toVirtualVoxelPos(vert, thresh);
 			unsigned int nn = hasNearestNeighborApprox(coord, neighborQuery, thresh);
 
 			if (nn == (unsigned int)-1) {
@@ -251,7 +251,7 @@ unsigned int MeshData<FloatType>::mergeCloseVertices(FloatType thresh, bool appr
 		for (unsigned int v = 0; v < numV; v++) {
 
 			const vec3<FloatType>& vert = m_Vertices[v];
-			vec3i coord = toVirtualVoxelPos(vert, thresh);		
+			vec3i coord = toVirtualVoxelPos(vert, thresh);
 			unsigned int nn = hasNearestNeighbor(coord, neighborQuery, vert, thresh);
 
 			if (nn == (unsigned int)-1) {
@@ -301,31 +301,35 @@ unsigned int MeshData<FloatType>::removeDegeneratedFaces()
 {
 	Indices newFacesIndicesVertices;
 
-	for (size_t i = 0; i < m_FaceIndicesVertices.size(); i++) {
-		std::unordered_set<unsigned int> _set(m_FaceIndicesVertices[i].size());
-		bool foundDuplicate = false;
-		for (unsigned int idx : m_FaceIndicesVertices[i]) {
-			if (_set.find(idx) != _set.end()) {
-				foundDuplicate = true;
-				break;
-			} else {
-				_set.insert(idx);
-			}
-		}
-		if (!foundDuplicate) {
-			newFacesIndicesVertices.push_back(m_FaceIndicesVertices[i]);
-		}
-	}
-	if (m_FaceIndicesVertices.size() != newFacesIndicesVertices.size()) {
-		m_FaceIndicesVertices = newFacesIndicesVertices;
-	}
+    for (size_t i = 0; i < m_FaceIndicesVertices.size(); i++) {
+        std::unordered_set<unsigned int> _set(m_FaceIndicesVertices[i].size());
+        bool foundDuplicate = false;
 
-	return (unsigned int)m_FaceIndicesVertices.size();
+        for (unsigned int j = 0; j < m_FaceIndicesVertices[i].size(); ++j) {
+
+            auto idx = m_FaceIndicesVertices[i][j];
+            if (_set.find(idx) != _set.end()) {
+                foundDuplicate = true;
+                break;
+            } else {
+                _set.insert(idx);
+            }
+        }
+
+        if (!foundDuplicate) {
+            newFacesIndicesVertices.push_back(m_FaceIndicesVertices[i]);
+        }
+    }
+    if (m_FaceIndicesVertices.size() != newFacesIndicesVertices.size()) {
+        m_FaceIndicesVertices = newFacesIndicesVertices;
+    }
+
+    return (unsigned int)m_FaceIndicesVertices.size();
 }
 
 
 
- 
+
 template <class FloatType>
 unsigned int MeshData<FloatType>::removeIsolatedVertices()
 {
@@ -355,13 +359,13 @@ unsigned int MeshData<FloatType>::removeIsolatedVertices()
 			}
 		}
 	}
-	
+
 	m_Vertices = std::vector<vec3<FloatType>>(new_verts.begin(), new_verts.end());
 
 	if (hasPerVertexColors())		m_Colors = std::vector<vec4<FloatType>>(new_color.begin(), new_color.end());
 	if (hasPerVertexNormals())		m_Normals = std::vector<vec3<FloatType>>(new_normals.begin(), new_normals.end());
 	if (hasPerVertexTexCoords())	m_TextureCoords = std::vector<vec2<FloatType>>(new_tex.begin(), new_tex.end());
-	
+
 	return (unsigned int)m_Vertices.size();
 }
 
@@ -419,13 +423,13 @@ size_t MeshData<FloatType>::removeIsolatedPieces(size_t minVertexNum) {
 			for (const auto& n_idx : face) {
 				if (v_idx == n_idx) continue; //not a neighbor to itself...
 				vertex_neighbors[v_idx].insert(n_idx);
-			}			
+			}
 		}
 	}
 
 	std::vector<size_t> cluster_ids(m_Vertices.size(), (size_t)-1);
 	std::vector<size_t> cluster_sizes;
-	
+
 	size_t cluster_id = 0;
 	for (size_t vertex_idx = 0; vertex_idx < m_Vertices.size(); vertex_idx++) {
 		size_t cluster_size = traverseNeighbors(vertex_neighbors, cluster_ids, cluster_id, vertex_idx);
@@ -745,7 +749,7 @@ FloatType MeshData<FloatType>::subdivideFacesLoop( float edgeThresh /*= 0.0f*/ )
 
 		float edgeLength(const std::vector<vec3<FloatType>>& vertices) const {
 			return (vertices[v0] - vertices[v1]).length();
-		} 
+		}
 
 		unsigned int v0;
 		unsigned int v1;
@@ -821,14 +825,14 @@ FloatType MeshData<FloatType>::subdivideFacesLoop( float edgeThresh /*= 0.0f*/ )
 			}
 			newFaces.push_back(centerFace);
 
-		} 
+		}
 		else if (noneEdgesExist) {
 			newFaces.push_back(face);
 		}
 		else {
 			std::vector<unsigned int> cFace;
 			for (unsigned int i = 0; i < face.size(); i++) {
-				cFace.push_back(face[i]);             
+				cFace.push_back(face[i]);
 				Edge e(face[i], face[(i+1)%face.size()]);
 				if (edgeMap.find(e) != edgeMap.end())   cFace.push_back(edgeMap[e]);
 			}
@@ -874,7 +878,7 @@ FloatType MeshData<FloatType>::subdivideFacesLoop( float edgeThresh /*= 0.0f*/ )
 				newFaces[newFaces.size()-1][1] = cFace[(i+1)%cFace.size()];
 				newFaces[newFaces.size()-1][2] = newIdx;
 			}
-		} 
+		}
 	}
 
 	//m_FaceIndicesVertices = std::vector<std::vector<unsigned int>>(newFaces.begin(), newFaces.end());

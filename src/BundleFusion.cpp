@@ -103,19 +103,24 @@ bool initBundleFusion ( std::string app_config, std::string bundle_config )
             return false;
         }
 
+        std::cout << "Reading the application configuration file." << std::endl;
         //Read the global app state
         ParameterFile parameterFileGlobalApp ( app_config );
 
         GlobalAppState::getInstance().readMembers ( parameterFileGlobalApp );
 
+        std::cout << "Reading the bundle configuration file." << std::endl;
         //Read the global camera tracking state
         ParameterFile parameterFileGlobalBundling ( bundle_config );
         GlobalBundlingState::getInstance().readMembers ( parameterFileGlobalBundling );
 
+        std::cout << "Initialising GPUs." << std::endl;
         DualGPU& dualGPU = DualGPU::get();	//needs to be called to initialize devices
+        dualGPU.printList();
         dualGPU.setDevice ( DualGPU::DEVICE_RECONSTRUCTION );	//main gpu
         ConditionManager::init();
 
+        std::cout << "Getting RGBD sensor." << std::endl;
         g_RGBDSensor = getRGBDSensor();
 
         //init the input RGBD sensor
@@ -126,10 +131,11 @@ bool initBundleFusion ( std::string app_config, std::string bundle_config )
         }
         g_RGBDSensor->createFirstConnected();
 
-
+        std::cout << "Creating CUDAImageManager." << std::endl;
         g_imageManager = new CUDAImageManager ( GlobalAppState::get().s_integrationWidth, GlobalAppState::get().s_integrationHeight,
                                                 GlobalBundlingState::get().s_widthSIFT, GlobalBundlingState::get().s_heightSIFT, g_RGBDSensor, false );
 #ifdef RUN_MULTITHREADED
+        std::cout << "Creating bundling thread." << std::endl;
         bundlingThread  = new std::thread ( bundlingThreadFunc );
         //waiting until bundler is initialized
         while ( !g_bundler )	usleep ( 0 );
@@ -195,6 +201,12 @@ bool processInputRGBDFrame ( cv::Mat& rgb, cv::Mat& depth )
         g_imageManager->setBundlingFrameRdy();					//ready for bundling thread
         ConditionManager::unlockAndNotifyImageManagerFrameReady ( ConditionManager::Recon );
     }
+//    else {
+//        std::cout << "No frame data, exiting early." << std::endl;
+//        ConditionManager::setExit();
+//        return false;
+//    }
+
     if ( !g_RGBDSensor->isReceivingFrames() ) //sequence is done
     {
         if ( bGotDepth )
@@ -202,7 +214,6 @@ bool processInputRGBDFrame ( cv::Mat& rgb, cv::Mat& depth )
             std::cerr << ( "ERROR bGotDepth = true but sequence is done" ) << std::endl;
             return false;
         }
-
         g_imageManager->setBundlingFrameRdy();				// let bundling still optimize after scanning done
         ConditionManager::unlockAndNotifyImageManagerFrameReady ( ConditionManager::Recon );
     }
