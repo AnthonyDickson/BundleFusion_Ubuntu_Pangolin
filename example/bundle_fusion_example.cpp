@@ -54,7 +54,7 @@ int main(int argc, char **argv) {
     auto bundle_config_file = std::string(argv[2]);
     const auto datasetFolder = std::string(argv[3]);
     const auto rgbFolder = datasetFolder + "/rgb";
-    const auto depthFolder = datasetFolder + "/depth";
+    const auto depthFolder = datasetFolder + "/masked_depth";
 
     std::cout << "Working Directory: " << get_working_path() << std::endl;
 //
@@ -112,7 +112,7 @@ int main(int argc, char **argv) {
     std::cout << "Found " << rgbFilenames.size() << " RGB frames." << std::endl;
 
     auto depthFilenames = getFileNames(depthFolder);
-    std::cout << "Found " << depthFilenames.size() << " RGB frames." << std::endl;
+    std::cout << "Found " << depthFilenames.size() << " depth maps." << std::endl;
 
     if (rgbFilenames.size() != depthFilenames.size()) {
         std::cerr << "Uneven number of files found in RGB folder and depth folder (" << rgbFilenames.size() << " vs "
