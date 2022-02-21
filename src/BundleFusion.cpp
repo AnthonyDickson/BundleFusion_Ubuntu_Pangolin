@@ -201,11 +201,11 @@ bool processInputRGBDFrame ( cv::Mat& rgb, cv::Mat& depth )
         g_imageManager->setBundlingFrameRdy();					//ready for bundling thread
         ConditionManager::unlockAndNotifyImageManagerFrameReady ( ConditionManager::Recon );
     }
-//    else {
-//        std::cout << "No frame data, exiting early." << std::endl;
-//        ConditionManager::setExit();
-//        return false;
-//    }
+    else {
+        std::cout << "No frame data, exiting early." << std::endl;
+        ConditionManager::setExit();
+        return false;
+    }
 
     if ( !g_RGBDSensor->isReceivingFrames() ) //sequence is done
     {
@@ -245,7 +245,7 @@ bool processInputRGBDFrame ( cv::Mat& rgb, cv::Mat& depth )
     ///////////////////////////////////////
     // Reconstruction of current frame
     ///////////////////////////////////////
-    bool validTransform = true;
+    bool validTransform;
     bool bGlobalTrackingLost = false;
     if ( bGotDepth )
     {
@@ -480,6 +480,10 @@ bool deinitBundleFusion()
 
     return true;
 
+}
+
+TrajectoryManager* getTrajectoryManager() {
+    return g_bundler->getTrajectoryManager();
 }
 
 /************************************************************************/

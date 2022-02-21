@@ -3,6 +3,8 @@
 
 #include <string>
 #include <opencv2/opencv.hpp>
+#include "TrajectoryManager.h"
+//#include "core-math/matrix4x4.h"
 
 /**
  * init function for bundle fusion:
@@ -26,6 +28,11 @@ bool initBundleFusion(std::string app_config, std::string bundle_config);
  * */
 bool processInputRGBDFrame(cv::Mat& rgb, cv::Mat& depth);
 
+/**
+ * Get the trajectory manager.
+ * @return A pointer to the trajectory manager object.
+ */
+TrajectoryManager* getTrajectoryManager();
 
 /**
  * release all resources include GPU, memory or other shader sources
