@@ -35,49 +35,6 @@ std::vector<std::string> getFileNames(const std::string &folderName) {
     return filenames;
 }
 
-vec4f quaternionFromHomogenousTransform(const mat4f &M) {
-    float m00 = M.at(0, 0);
-    float m01 = M.at(0, 1);
-    float m02 = M.at(0, 2);
-    float m10 = M.at(1, 0);
-    float m11 = M.at(1, 1);
-    float m12 = M.at(1, 2);
-    float m20 = M.at(2, 0);
-    float m21 = M.at(2, 1);
-    float m22 = M.at(2, 2);
-
-    float tr = m00 + m11 + m22;
-    float qx, qy, qz, qw;
-
-    if (tr > 0) {
-        float S = sqrt(tr + 1.0f) * 2; // S=4*qw
-        qx = (m21 - m12) / S;
-        qy = (m02 - m20) / S;
-        qz = (m10 - m01) / S;
-        qw = 0.25f * S;
-    } else if ((m00 > m11)&(m00 > m22)) {
-        float S = sqrt(1.0f + m00 - m11 - m22) * 2; // S=4*qx
-        qx = 0.25f * S;
-        qy = (m01 + m10) / S;
-        qz = (m02 + m20) / S;
-        qw = (m21 - m12) / S;
-    } else if (m11 > m22) {
-        float S = sqrt(1.0f + m11 - m00 - m22) * 2; // S=4*qy
-        qx = (m01 + m10) / S;
-        qy = 0.25f * S;
-        qz = (m12 + m21) / S;
-        qw = (m02 - m20) / S;
-    } else {
-        float S = sqrt(1.0f + m22 - m00 - m11) * 2; // S=4*qz
-        qx = (m02 + m20) / S;
-        qy = (m12 + m21) / S;
-        qz = 0.25f * S;
-        qw = (m10 - m01) / S;
-    }
-
-    return {qx, qy, qz, qw};
-}
-
 void saveTrajectory() {
     std::vector<mat4f> trajectory;
     getTrajectoryManager()->getOptimizedTransforms(trajectory);
@@ -90,11 +47,13 @@ void saveTrajectory() {
     if (trajectoryFile.is_open()) {
         std::cout << "Writing camera trajectory data to " << trajectoryOutputPath << std::endl;
 
-        for (const auto &pose: trajectory) {
-            const auto rot = quaternionFromHomogenousTransform(pose);
-            const auto pos = pose.getTranslation();
+        for (const auto &transformMatrix: trajectory) {
+            // This will dump the transform matrix in row major order.
+            for (const auto &element : transformMatrix.matrix) {
+                trajectoryFile << element << " ";
+            }
 
-            trajectoryFile << rot.x << " " << rot.y << " " << rot.z << " " << rot.w << " " << pos.x << " " << pos.y << " " << pos.z << std::endl;
+            trajectoryFile << std::endl;
         }
 
         trajectoryFile.close();
