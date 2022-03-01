@@ -3,7 +3,7 @@
     <deployment type="docker-image">
       <settings>
         <option name="imageTag" value="eight0153/opencv:3.4.16-cu116" />
-        <option name="command" value="data/rgbd_dataset_freiburg3_walking_xyz_vtm" />
+        <option name="command" value="data/rgbd_dataset_freiburg3_walking_xyz_vtm masked_estimated_depth masked_estimated_depth" />
         <option name="containerName" value="bundle-fusion" />
         <option name="commandLineOptions" value="--gpus all" />
         <option name="showCommandPreview" value="true" />

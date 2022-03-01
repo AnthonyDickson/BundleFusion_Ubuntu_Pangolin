@@ -20,6 +20,11 @@ std::vector<std::string> getFileNames(const std::string &folderName) {
     struct dirent *ptr;
     DIR *dir;
     dir = opendir(folderName.c_str());
+
+    if (dir == nullptr) {
+        throw std::runtime_error("Could not open directory: " + folderName);
+    }
+
     std::vector<std::string> filenames;
 
     while ((ptr = readdir(dir)) != nullptr) {
@@ -63,9 +68,9 @@ void saveTrajectory() {
 }
 
 int main(int argc, char **argv) {
-    if (argc != 4) {
+    if (argc < 4 || argc > 5) {
         std::cout
-                << "usage: ./bundle_fusion_example /path/to/zParametersDefault.txt /path/to/zParametersBundlingDefault.txt /path/to/dataset"
+                << "usage: ./bundle_fusion_example /path/to/zParametersDefault.txt /path/to/zParametersBundlingDefault.txt /path/to/dataset [name_of_depth_map_folder]"
                 << std::endl;
         return -1;
     }
@@ -81,11 +86,18 @@ int main(int argc, char **argv) {
     auto bundle_config_file = std::string(argv[2]);
     const auto datasetFolder = std::string(argv[3]);
     const auto rgbFolder = datasetFolder + "/rgb";
-    const auto depthFolder = datasetFolder + "/masked_depth";
+    const auto depthFolder = datasetFolder + "/" + ((argc == 4) ? "masked_depth" : argv[4]);
+
+    std::cout << "Args: " << argc << std::endl;
+    std::cout << "App Config File: " << app_config_file << std::endl;
+    std::cout << "Bundling Config File: " << bundle_config_file << std::endl;
+    std::cout << "Dataset Folder: " << datasetFolder << std::endl;
+    std::cout << "RGB Folder: " << rgbFolder << std::endl;
+    std::cout << "Depth Folder: " << depthFolder << std::endl;
 
     std::cout << "Working Directory: " << get_working_path() << std::endl;
 //
-//    for (const auto &filename : getFileNames("../")) {
+//    for (const auto &filename : getFileNames(datasetFolder)) {
 //        std::cout << filename << std::endl;
 //    }
 
