@@ -68,9 +68,9 @@ void saveTrajectory() {
 }
 
 int main(int argc, char **argv) {
-    if (argc < 4 || argc > 5) {
+    if (argc != 6) {
         std::cout
-                << "usage: ./bundle_fusion_example /path/to/zParametersDefault.txt /path/to/zParametersBundlingDefault.txt /path/to/dataset [name_of_depth_map_folder]"
+                << "usage: ./bundle_fusion_example /path/to/zParametersDefault.txt /path/to/zParametersBundlingDefault.txt /path/to/dataset <name_of_rgb_folder> <name_of_depth_map_folder>"
                 << std::endl;
         return -1;
     }
@@ -85,8 +85,8 @@ int main(int argc, char **argv) {
     auto app_config_file = std::string(argv[1]);
     auto bundle_config_file = std::string(argv[2]);
     const auto datasetFolder = std::string(argv[3]);
-    const auto rgbFolder = datasetFolder + "/rgb";
-    const auto depthFolder = datasetFolder + "/" + ((argc == 4) ? "masked_depth" : argv[4]);
+    const auto rgbFolder = datasetFolder + "/" + std::string(argv[4]);
+    const auto depthFolder = datasetFolder + "/" + std::string(argv[5]);
 
     std::cout << "Args: " << argc << std::endl;
     std::cout << "App Config File: " << app_config_file << std::endl;
@@ -170,7 +170,7 @@ int main(int argc, char **argv) {
 
         cv::Mat depthImage;
         cv::imread(dep_path, cv::IMREAD_UNCHANGED).convertTo(depthImage, CV_32FC1);
-        depthImage = 1000.f * depth_scale * depthImage; // Assuming VTM dataset, this line will convert depth to mm.
+        depthImage = 1000.f * depth_scale * depthImage; // Assuming HIVE dataset, this line will convert depth to mm.
         depthImage.convertTo(depthImage, CV_16UC1); // This is the datatype that the de
 
         if (rgbImage.empty() || depthImage.empty()) {
